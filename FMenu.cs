@@ -97,20 +97,22 @@ namespace PVLaJoya
 
             //Nueva Version
             queryProductos = " SELECT DISTINCT P.Id, \n"
-          + " CONCAT(ISNULL(P2.Descripcion,P.Descripcion), ' ', P.Marca, ' ', \n"
-          + " P.Presentacion) Producto, \n"
-          + " CONCAT(Pres.Presentacion, ' (', Pres.Uom, ')') 'Presentación', \n"
-          + " Pres.CodigoBarras, Pres.Uom,\n"
-          + " ROUND((ISNULL(Pres.Precio, 0)),2) Precio, P.IVA, P.IEPS, P.Foto, \n"
-          + " (CASE WHEN Pres.Uom > 1 THEN 1 ELSE 0 END) EsCaja, ISNULL(Pres.Id, 0) IdPresentacionVenta, \n"
-          + " P.IdMarca, P.IdLinea, (Pres.Precio + ((Pres.Precio * P.Iva) + (Pres.Precio * P.Ieps))) PrecioFinal, \n"
-          + " (PVP.General + ((PVP.General * P.Iva) + (PVP.General * P.Ieps))) AS PrecioGeneral, (PVP.Talleres + ((PVP.Talleres * P.Iva) + (PVP.Talleres * P.Ieps))) AS PrecioTalleres,  (PVP.Distribuidores + ((PVP.Distribuidores * P.Iva) + (PVP.Distribuidores * P.Ieps))) AS PrecioDistribuidores, Pres.sku, P.Pesaje \n"
-          + " FROM PVProductos P \n"
-          + " LEFT JOIN ( \n"
-          + " SELECT DISTINCT(idproducto), Pre.idSucursal, Pre.IdPresentacionVenta, Pre.General, Pre.Talleres, Pre.Distribuidores FROM PVPrecios Pre WHERE pre.idSucursal = " + idSucursal+" \n"
-          + " ) PVP ON PVP.idproducto = P.Id \n"
-          + " INNER JOIN PVPresentacionesVentaProd Pres ON Pres.IdProducto = P.Id AND Pres.Id = PVP.IdPresentacionVenta \n"
-          + " LEFT JOIN PVProductos P2 ON Pres.IdProductoIndividual = P2.Id \n";
+        + " CONCAT(ISNULL(P2.Descripcion,P.Descripcion), ' ', P.Marca, ' ', \n"
+        + " P.Presentacion) Producto, \n"
+        + " CONCAT(Pres.Presentacion, ' (', Pres.Uom, ')') 'Presentación', \n"
+        + " Pres.CodigoBarras, Pres.Uom,\n"
+        + " ROUND((ISNULL(Pres.Precio, 0)),2) Precio, P.IVA, P.IEPS, P.Foto, \n"
+        + " (CASE WHEN CONVERT(float, Pres.Uom) > 1 THEN 1 ELSE 0 END) EsCaja, ISNULL(Pres.Id, 0) IdPresentacionVenta, \n"
+        + " P.IdMarca, P.IdLinea, (Pres.Precio + ((Pres.Precio * P.Iva) + (Pres.Precio * P.Ieps))) PrecioFinal, \n"
+        + " (PVP.General + ((PVP.General * P.Iva) + (PVP.General * P.Ieps))) AS PrecioGeneral, (PVP.Talleres + ((PVP.Talleres * P.Iva) + (PVP.Talleres * P.Ieps))) AS PrecioTalleres,  (PVP.Distribuidores + ((PVP.Distribuidores * P.Iva) + (PVP.Distribuidores * P.Ieps))) AS PrecioDistribuidores, \n"
+        + " ISNULL(PVP.General, 0) AS PrecioGeneralSinIva, ISNULL(PVP.Talleres, 0) AS PrecioTalleresSinIva, ISNULL(PVP.Distribuidores,0) AS PrecioDistribuidoresSinIva, \n"
+        + " Pres.sku, P.Pesaje \n"
+        + " FROM PVProductos P \n"
+        + " LEFT JOIN ( \n"
+        + " SELECT DISTINCT(idproducto), Pre.idSucursal, Pre.IdPresentacionVenta, Pre.General, Pre.Talleres, Pre.Distribuidores FROM PVPrecios Pre WHERE pre.idSucursal = " + idSucursal + " \n"
+        + " ) PVP ON PVP.idproducto = P.Id \n"
+        + " INNER JOIN PVPresentacionesVentaProd Pres ON Pres.IdProducto = P.Id AND Pres.Id = PVP.IdPresentacionVenta \n"
+        + " LEFT JOIN PVProductos P2 ON Pres.IdProductoIndividual = P2.Id \n";
 
             dtProductos = sqlLoc.selec(queryProductos);
         }

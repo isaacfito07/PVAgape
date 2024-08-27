@@ -106,7 +106,7 @@ namespace PVLaJoya
                            + "     WHERE I.IdSucursal= " + idSucursal + "\n"
                            + "     GROUP BY idProducto, idSucursal, EsCaja \n"
                            + " )IC ON IC.IdProducto = ISNULL(Pres.IdProductoIndividual, P.id) AND \n"
-                           + " CASE WHEN Pres.Uom = 1 THEN 0 ELSE 1 END = EsCaja WHERE  ISNULL(Pres.VerPV,0)=1 AND PVP.idSucursal = "+idSucursal;
+                           + " CASE WHEN CONVERT(float, Pres.Uom) = 1 THEN 0 ELSE 1 END = EsCaja WHERE  ISNULL(Pres.VerPV,0)=1 AND PVP.idSucursal = " + idSucursal;
 
             if (!string.IsNullOrEmpty(producto))
             {
