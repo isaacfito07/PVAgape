@@ -252,7 +252,6 @@ namespace PVLaJoya
                 bool ReimpresionVenta = false;
                 bool ReimpresionCorteParcial = false;
                 bool ReimpresionCorteFinal = false;
-                bool VisualizarTicket = true;
 
                 //click para reimpresion
                 /*if (e.ColumnIndex == indReimpresion)
@@ -273,8 +272,8 @@ namespace PVLaJoya
                     }
                 }
 
-                if (ReimpresionVenta || VisualizarTicket) {
-                    FTicket ticket = new FTicket(sqlLoc, (string)dvgHistoria.Rows[e.RowIndex].Cells[indFolio].Value, ReimpresionVenta);
+                if (ReimpresionVenta) {
+                    FTicket ticket = new FTicket(sqlLoc, (dvgHistoria.Rows[e.RowIndex].Cells[indFolio].Value).ToString(), false);
                     ticket.ShowDialog();
 
                 }
@@ -288,7 +287,7 @@ namespace PVLaJoya
                 if (ReimpresionCorteFinal)
                 {
                     //(ConSQL _sqlLoc, string _folioCorte, ConSQL _sql, string _nombre, string _idSucursal, string _sucursal, string _idUsuario, string _IdCaja)
-                    FImprimeCorteII ticket = new FImprimeCorteII(sqlLoc, (string)dvgHistoria.Rows[e.RowIndex].Cells[indFolioTicket].Value, sql, nombre, idSucursal, sucursal, idUsuario, numCaja);
+                    FImprimeCorteII ticket = new FImprimeCorteII(sqlLoc, (string)dvgHistoria.Rows[e.RowIndex].Cells[indFolioTicket].Value, sql, nombre, idSucursal, sucursal, idUsuario, numCaja, false);
                     ticket.ShowDialog();
                 }
 

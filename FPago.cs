@@ -116,7 +116,7 @@ namespace PVLaJoya
         private void fPago_Load(object sender, EventArgs e)
         {
             lblRestante.Text = TotalVenta.ToString("C2");
-            lblCambio.Text = "CAMBIO: " + 0.ToString("C2");
+            lblCambio.Text = "CAMBIO: \n" + 0.ToString("C2");
 
             //Pago efectivo por default
             //PagoEfectivo();
@@ -126,6 +126,8 @@ namespace PVLaJoya
             nudCredito.Enabled = false;
             VentaTotal = Convert.ToDouble((lblTotalFinal.Text).Replace("$", string.Empty));
             VentaSinDescuento = VentaTotal;
+
+            nudEfectivo.Select();
         }
 
         private void btnLimpiar_Click(object sender, EventArgs e)
@@ -331,7 +333,7 @@ namespace PVLaJoya
             if ((decimal)nudEfectivo.Value <= 0 || Cambio < 0)
                 Cambio = 0;
 
-            lblCambio.Text = "CAMBIO: " + Cambio.ToString("C2");
+            lblCambio.Text = "CAMBIO: \n" + Cambio.ToString("C2");
         }
 
         private void nudEfectivo_ValueChanged(object sender, EventArgs e)

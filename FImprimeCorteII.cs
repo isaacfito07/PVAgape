@@ -27,11 +27,12 @@ namespace PVLaJoya
         string FechaCorte, FechaDe, FechaA, Sucursal, FolioCorte = "", Cajero, NumCaja = "0", DeFolio = "", AFolio = "", NumInicialVenta = "N/A", NumFinalVenta = "N/A";
         string FoliosCortes = "", FoliosRetiros = "-", TotalCortesParciales;
         string DifEfectivo, DifTarjetADebito, DifTarjetaCredito;
+        bool CorteFinalMenu;
 
         private IList<Stream> m_streams;
         private int m_currentPageIndex;
 
-        public FImprimeCorteII(ConSQL _sqlLoc, string _folioCorte, ConSQL _sql, string _nombre, string _idSucursal, string _sucursal, string _idUsuario, string _IdCaja)
+        public FImprimeCorteII(ConSQL _sqlLoc, string _folioCorte, ConSQL _sql, string _nombre, string _idSucursal, string _sucursal, string _idUsuario, string _IdCaja, bool _CorteFinalMenu = true)
         {
             InitializeComponent();
             folioCorte = _folioCorte;
@@ -43,6 +44,7 @@ namespace PVLaJoya
             sucursal = _sucursal;
             idUsuarioGlob = _idUsuario;
             IdCaja = _IdCaja;
+            CorteFinalMenu = _CorteFinalMenu;
         }
 
         private void fImprimeCorteII_Load(object sender, EventArgs e)
@@ -128,10 +130,13 @@ namespace PVLaJoya
             rpvCorte.RefreshReport();
             Imprimir();
 
-            FDisparoNube disparoNube = new FDisparoNube(sql, sqlLoc, nombre, idSucursal, sucursal, idUsuarioGlob, IdCaja);
-            disparoNube.ShowDialog();
+            if (CorteFinalMenu)
+            {
+                FDisparoNube disparoNube = new FDisparoNube(sql, sqlLoc, nombre, idSucursal, sucursal, idUsuarioGlob, IdCaja);
+                disparoNube.ShowDialog();
 
-            this.Close();
+                this.Close();
+            }
         }
 
         private DataTable TablaInfo(DataTable dtInfo)
@@ -158,7 +163,10 @@ namespace PVLaJoya
         private void Imprimir()
         {
             Export(rpvCorte.LocalReport);
-            Print();
+            if (CorteFinalMenu)
+            {
+                Print();
+            }
         }
 
         //<MarginTop>0.1in</MarginTop>

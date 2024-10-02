@@ -126,26 +126,25 @@ namespace PVLaJoya
         private void BtnNuevaVenta_Click(object sender, EventArgs e)
         {
             //Verificar fondo caja
-            var fCaja = sqlLoc.scalar(" SELECT TOP(1) Id FROM PVFondoCaja "
-                + "WHERE IdSucursal = '" + idSucursal + "'\n"
-                + " AND IdUsuario='" + idUsuario + "' AND FolioCorteParcialCaja IS NULL "
-                + " ORDER BY Id DESC"); //AND FolioCorteCaja IS NULL
+            string queryAgregarFondo = "SELECT TOP(1) Id FROM PVFondoCaja \n" +
+                "WHERE IdSucursal = '" + idSucursal + "'\n" +
+                "AND IdUsuario='" + idUsuario + "' AND FolioCorteParcialCaja IS NULL ORDER BY Id DESC";
+            var fCaja = sqlLoc.scalar(queryAgregarFondo);
 
-            if (fCaja != null)
-            {
-                FVenta venta = new FVenta(sql, sqlLoc, nombre, idSucursal, sucursal,
-                    idUsuario, dtProductos, imgLstCategorias, imgLstProductos,
-                    "0", false, numCaja);
-                venta.ShowDialog();
-            }
-            else
+            if (fCaja == null)
             {
                 FCajaFondo fondoCaja = new FCajaFondo(sql, sqlLoc, nombre, idSucursal, sucursal, idUsuario, numCaja);
                 this.Hide();
                 fondoCaja.ShowDialog();
             }
 
-          
+            fCaja = sqlLoc.scalar(queryAgregarFondo);
+
+            if (fCaja != null)
+            {
+                AbrirVentas();
+            }
+            this.Show();
         }
 
         private void BtnHistorial_Click(object sender, EventArgs e)
@@ -243,8 +242,11 @@ namespace PVLaJoya
         private void BtnCorteCaja_Click(object sender, EventArgs e)
         {
             FMenuCorte menuCorte = new FMenuCorte(sql, sqlLoc, nombre, idSucursal, sucursal, idUsuario, false, numCaja);
-            this.Close();
             menuCorte.ShowDialog();
+            if (menuCorte.CorteFinalizado)
+            {
+                this.Close();
+            }
         }
 
         private void ConsultasBDToolStripMenuItem_Click(object sender, EventArgs e)
@@ -263,6 +265,18 @@ namespace PVLaJoya
             else
             {
                 MessageBox.Show("Verificar usuario y/o contraseña", "No existe usuario", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+            }
+        }
+
+        private void AbrirVentas()
+        {
+            FVenta venta = new FVenta(sql, sqlLoc, nombre, idSucursal, sucursal,
+                    idUsuario, dtProductos, imgLstCategorias, imgLstProductos,
+                    "0", false, numCaja);
+            venta.ShowDialog();
+            if (venta.CorteFinalizado)
+            {
+                this.Close();
             }
         }
 
