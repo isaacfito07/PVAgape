@@ -47,10 +47,7 @@ namespace PVLaJoya
 
         private void fCajaFondo_FormClosing(object sender, FormClosingEventArgs e)
         {
-            //Muestra menú
-            FMenu menu = new FMenu(sql, sqlLoc, nombre, idSucursal, sucursal, idUsuario, numCaja);
-            this.Hide();
-            menu.ShowDialog();
+
         }
 
         private void btnGuardar_Click(object sender, EventArgs e)

@@ -35,6 +35,7 @@ namespace PVLaJoya
         DataTable dtProductos;
         bool modoEdicion = false, controlClienteExistente = true;
         bool cancelacion = false, pagoCancelado = false;
+        public bool CorteFinalizado = false;
 
         //permiso para cancelar
         bool permisoCancelar = false;
@@ -201,6 +202,7 @@ namespace PVLaJoya
             toolTip.ToolTipTitle = "IMPORTANTE";
 
             btnBorrarTxtCliente.Visible = false;
+            txtScan.Select();
         }
 
 
@@ -813,8 +815,9 @@ namespace PVLaJoya
                     MessageBox.Show("Ocurrió un error al guardar la venta", "Error", MessageBoxButtons.OK, MessageBoxIcon.Information, MessageBoxDefaultButton.Button1);
                 }
             }
-
-            fin:;
+            LoginSupervisorPrecios = false;
+            dgvVenta.Columns[5].ReadOnly = true;
+        fin:;
         }
 
 
@@ -1681,6 +1684,8 @@ namespace PVLaJoya
                 {
                     nuevaVenta();
                 }
+                LoginSupervisorPrecios = false;
+                dgvVenta.Columns[5].ReadOnly = true;
             }
         }
 
@@ -2877,6 +2882,11 @@ namespace PVLaJoya
                     sumarTotal();
 
                 TerminarFuncion:;
+                    if (dgvVenta.Rows.Count <= 0)
+                    {
+                        txtScan.Select();
+                        txtScan.Focus();
+                    }
 
                 }
                 else if (e.ColumnIndex == indQty)
@@ -4520,6 +4530,11 @@ namespace PVLaJoya
         {
             FMenuCorte menuCorte = new FMenuCorte(sql, sqlLoc, nombre, idSucursal, sucursal, idUsuario, false, numCaja);
             menuCorte.ShowDialog();
+            if (menuCorte.CorteFinalizado)
+            {
+                CorteFinalizado = true;
+                this.Close();
+            }
         }
 
         private void DesplegarComboCliente(object sender)
@@ -4795,6 +4810,12 @@ namespace PVLaJoya
                     {
                         LoginSupervisorPrecios = true;
                         dgvVenta.Columns[5].ReadOnly = false;
+
+                        ToolTip tool = new ToolTip();
+                        tool.IsBalloon = true;
+                        tool.ToolTipIcon = ToolTipIcon.Info;
+                        tool.ToolTipTitle = "IMPORTANTE";
+                        tool.Show("Los precios editados deben ser NETOS ", txtScan, 600, txtScan.Height - 30, 5000);
                     }
                     else
                     {

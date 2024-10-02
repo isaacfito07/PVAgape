@@ -68,10 +68,11 @@ namespace PVLaJoya
                 
             DataTable dtVentas = sqlLoc.selec(query);
 
-            ////Toma el último fondo de caja ingresado de esa sucursal y usuario
-            var Fondo = sqlLoc.scalar(" SELECT TOP(1) Monto FROM PVFondoCaja \n"
-                + " WHERE IdSucursal='" + idSucursal + "' \n"
-                + " ORDER BY Fecha DESC ");
+            ////Toma el SUM() fondo de caja ingresado de esa sucursal con la fecha del mismo dia
+            string queryFondo = " SELECT SUM(Monto) FROM PVFondoCaja \n"
+                + " WHERE IdSucursal = '" + idSucursal + "' \n"
+                + " AND CONVERT(DATE,Fecha) = CONVERT(DATE,GETDATE()) AND FolioCorteParcialCaja IS NULL ";
+            var Fondo = sqlLoc.scalar(queryFondo);
 
             FondoCaja = 0;
             if (Fondo != null)
@@ -493,20 +494,19 @@ namespace PVLaJoya
                                 "SET FolioCorteParcialCaja = '" + FolioCorteParcial + "' \n" +
                                 " WHERE Valido = 1 AND Terminada = 1 AND FolioCorteParcialCaja IS NULL \n" +
                                 " AND IdSucursal = " + idSucursal + " ";
-                            
-                            if (sqlLoc.exec(queryUpdtVentas) > 0)
-                            {
-                                ////Actualiza fondos de caja con el corte parcial
-                                sqlLoc.exec(" UPDATE PVFondoCaja " +
-                                    "SET FolioCorteParcialCaja = '" + FolioCorteParcial + "' \n" +
-                                    "WHERE FolioCorteParcialCaja IS NULL AND FolioCorteCaja IS NULL \n" +
-                                    "AND IdSucursal = " + idSucursal);
+                            sqlLoc.exec(queryUpdtVentas);
 
-                                //Actualiza retiros de caja con el corte parcial
-                                sqlLoc.exec(" UPDATE PVRetiroCaja SET FolioCorteParcialCaja= '" + FolioCorteParcial + "' \n" +
-                                    "WHERE FolioCorteParcialCaja IS NULL AND FolioCorteCaja IS NULL \n" +
-                                    "AND IdSucursal = " + idSucursal + " ");
-                            }
+                            ////Actualiza fondos de caja con el corte parcial
+                            string queryUpdateFondo = " UPDATE PVFondoCaja " +
+                                "SET FolioCorteParcialCaja = '" + FolioCorteParcial + "' \n" +
+                                "WHERE FolioCorteParcialCaja IS NULL AND FolioCorteCaja IS NULL \n" +
+                                "AND IdSucursal = " + idSucursal;
+                            sqlLoc.exec(queryUpdateFondo);
+
+                            //Actualiza retiros de caja con el corte parcial
+                            sqlLoc.exec(" UPDATE PVRetiroCaja SET FolioCorteParcialCaja= '" + FolioCorteParcial + "' \n" +
+                                "WHERE FolioCorteParcialCaja IS NULL AND FolioCorteCaja IS NULL \n" +
+                                "AND IdSucursal = " + idSucursal + " ");
 
                             //Generar ticket de corte parcial
                             FImprimeCorteParcial icp = new FImprimeCorteParcial(sqlLoc, FolioCorteParcial);

@@ -7,6 +7,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
+using static System.Windows.Forms.VisualStyles.VisualStyleElement.ToolTip;
 
 namespace PVLaJoya
 {
@@ -16,7 +17,7 @@ namespace PVLaJoya
         string nombre, idSucursal, sucursal, idUsuario, numCaja;
         bool permisoCorreccion = false;
         bool corteCaja = false;
-        bool CorteFinalizado = false;
+        public bool CorteFinalizado = false;
 
         public FMenuCorte(ConSQL _sql, ConSQL _sqlLoc, string _nombre, string _idSucursal, string _sucursal, string _idUsuario, bool _consulta, string _numCaja)
         {
@@ -42,6 +43,13 @@ namespace PVLaJoya
             {
                 this.Close();
             }
+        }
+
+        private void btnEntrada_Click(object sender, EventArgs e)
+        {
+            FCajaFondo fondoCaja = new FCajaFondo(sql, sqlLoc, nombre, idSucursal, sucursal, idUsuario, numCaja);
+            this.Hide();
+            fondoCaja.ShowDialog();
         }
 
         private void fMenuCorte_Load(object sender, EventArgs e)
@@ -184,11 +192,6 @@ namespace PVLaJoya
             {
                 FLogin fLogin = new FLogin();
                 fLogin.Show();
-            }
-            else
-            {
-                FMenu menu = new FMenu(sql, sqlLoc, nombre, idSucursal, sucursal, idUsuario, numCaja);
-                menu.Show();
             }
         }
     }
